@@ -98,7 +98,7 @@ public class CreateJson {
      * @param date The date the data was gathered from
      * Writes the json into the correct directory
      */
-    private static void writer(String fileName, String file, LocalDate date) {
+    public static void writer(String fileName, String file, LocalDate date) {
 
         String folderName = "resultfiles";
         String fullFileName;

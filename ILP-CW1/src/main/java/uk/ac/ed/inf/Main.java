@@ -8,6 +8,7 @@ import uk.ac.ed.inf.ilp.data.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static uk.ac.ed.inf.orderHandling.CreateDeliveries.createDeliveries;
@@ -31,7 +32,7 @@ public class Main {
             // Collects the args and instantiates them as variables
             dateToRunOn = LocalDate.parse(args[0], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            if (!Objects.equals(args[1], "https://ilp-rest.azurewebsites.net")) {
+            if (!Objects.equals(args[1], "https://ilp-rest-2024.azurewebsites.net/")) {
                 System.err.println("Invalid url, ending program");
                 System.exit(0);
             }
@@ -41,10 +42,18 @@ public class Main {
             System.exit(0);
         }
 
-
         // Accesses the REST service to collect the information that is needed
         Restaurant[] restaurants = getRestaurants(url);
         Order[] orders = getOrders(dateToRunOn, url);
+
+        ArrayList<Order> ordersOnDate = new ArrayList<Order>();
+        for (Order order : orders) {
+            if (order.getOrderDate().equals(dateToRunOn)) {
+                ordersOnDate.add(order);
+            }
+        }
+
+        System.out.println(ordersOnDate.size());
 
         NamedRegion[] noFlyZones = getNoFlyZones(url);
         NamedRegion centralRegion = getCentralRegion(url);
@@ -52,7 +61,7 @@ public class Main {
         System.out.println("Successfully deserialized all data");
 
         // Validates all orders, updating their status code
-        ArrayList<Order> validatedOrders = validateOrders(orders, restaurants);
+        ArrayList<Order> validatedOrders = validateOrders(ordersOnDate, restaurants);
 
         System.out.println("Successfully validated " + validatedOrders.size() + " orders");
 

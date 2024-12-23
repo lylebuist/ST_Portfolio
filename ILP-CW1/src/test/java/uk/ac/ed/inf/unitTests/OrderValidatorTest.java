@@ -1,4 +1,4 @@
-package uk.ac.ed.inf;
+package uk.ac.ed.inf.unitTests;
 
 import junit.framework.TestCase;
 import org.junit.jupiter.api.RepeatedTest;

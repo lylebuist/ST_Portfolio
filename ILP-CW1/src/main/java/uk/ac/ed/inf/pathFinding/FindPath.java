@@ -18,12 +18,21 @@ public class FindPath {
      * @return An optimal path from a start destination to a goal destination
      */
     public static ArrayList<Flightpath> findPath(LngLat start, LngLat to, String orderNo, NamedRegion[] noFlyZones, NamedRegion centralRegion) {
-
         // Creates objects needed for pathfinding
         LngLatHandler lngLatHandler = new LngLatHandler();
         Comparator<Map.Entry<LngLat[], Double[]>> heuristicComparator = new HeuristicComparator();
         ArrayList<Flightpath> flightpaths = new ArrayList<>();
         PriorityQueue<Map.Entry<LngLat[], Double[]>> frontier = new PriorityQueue<>(heuristicComparator);
+
+        if (start == null || to == null) {
+            return new ArrayList<>();
+        }
+
+        for (NamedRegion region : noFlyZones) {
+            if (lngLatHandler.isInRegion(start, region) || lngLatHandler.isInRegion(to, region)) {
+                return new ArrayList<>();
+            }
+        }
 
         // Instantiate needed variable
         LngLat from = start;

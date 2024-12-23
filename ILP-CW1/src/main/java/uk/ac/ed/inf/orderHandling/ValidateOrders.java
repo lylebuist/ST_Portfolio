@@ -15,7 +15,7 @@ public class ValidateOrders {
      * @param restaurants The list of restaurants
      * @return A list of validated orders
      */
-    public static ArrayList<Order> validateOrders(Order[] orders, Restaurant[] restaurants) {
+    public static ArrayList<Order> validateOrders(ArrayList<Order> orders, Restaurant[] restaurants) {
 
         // Validates every order, updating its codes and adding it to deliveries
         OrderValidator orderValidator = new OrderValidator();
@@ -23,6 +23,6 @@ public class ValidateOrders {
             orderValidator.validateOrder(orderToValidate, restaurants);
         }
 
-        return new ArrayList<>(Arrays.asList(orders));
+        return orders;
     }
 }

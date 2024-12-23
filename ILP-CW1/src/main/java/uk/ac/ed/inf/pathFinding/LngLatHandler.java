@@ -43,8 +43,6 @@ public class LngLatHandler implements LngLatHandling {
     public boolean isInCentralArea(LngLat point, NamedRegion centralArea) {
         if (centralArea == null) {
             throw new IllegalArgumentException("the named region is null");
-        } else if (!centralArea.name().equals("central")) {
-            throw new IllegalArgumentException("the named region: " + centralArea.name() + " is not valid - must be: central");
         } else {
             return this.isInRegion(point, centralArea);
         }

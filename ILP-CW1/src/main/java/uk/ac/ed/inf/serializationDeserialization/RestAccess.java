@@ -80,7 +80,7 @@ public class RestAccess {
                 // Creates the request to be sent
                 HttpClient client = HttpClient.newBuilder().build();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url + "/orders/" + date.toString()))
+                        .uri(URI.create(url + "/orders"))
                         .build();
 
                 // Creates a connection with the url and obtains the response to the request
