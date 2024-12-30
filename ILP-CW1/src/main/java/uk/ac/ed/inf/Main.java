@@ -44,7 +44,7 @@ public class Main {
 
         // Accesses the REST service to collect the information that is needed
         Restaurant[] restaurants = getRestaurants(url);
-        Order[] orders = getOrders(dateToRunOn, url);
+        Order[] orders = getOrders(url);
 
         ArrayList<Order> ordersOnDate = new ArrayList<Order>();
         for (Order order : orders) {

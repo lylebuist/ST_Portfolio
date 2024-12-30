@@ -74,7 +74,7 @@ public class RestAccess {
      * @return The orders
      * Deserialize the orders from the REST service
      */
-    public static Order[] getOrders(LocalDate date, String url) {
+    public static Order[] getOrders(String url) {
         if (appAlive(url)) {
             try {
                 // Creates the request to be sent

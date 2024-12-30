@@ -7,70 +7,108 @@ import uk.ac.ed.inf.ilp.data.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RESTAccessTest extends TestCase {
-    @Test
     public void testIsAliveNoURL() {
-        RestAccess access = new RestAccess();
-
-        boolean isIt = false;
+        boolean Alive = false;
         try {
-            isIt = access.appAlive(null);
+            Alive = RestAccess.appAlive(null);
         } catch (Exception e) {
             fail("An exception " + e + " was thrown");
         }
 
-        assertEquals(isIt, false);
+        assertFalse(Alive);
     }
 
-    @Test
     public void testIsAliveMalformedURL() {
-        RestAccess access = new RestAccess();
-
-        boolean isIt = false;
+        boolean Alive = false;
         try {
-            isIt = access.appAlive("https://www.google.com");
+            Alive = RestAccess.appAlive("https://www.google.com");
         } catch (Exception e) {
             fail("An exception " + e + " was thrown");
         }
 
-        assertEquals(isIt, false);
+        assertFalse(Alive);
     }
 
-    @Test
     public void testIsAlive() {
-        RestAccess access = new RestAccess();
-
-        boolean isIt = false;
+        boolean Alive = false;
         try {
-            isIt = access.appAlive("https://ilp-rest-2024.azurewebsites.net");
+            Alive = RestAccess.appAlive("https://ilp-rest-2024.azurewebsites.net");
         } catch (Exception e) {
             fail("An exception " + e + " was thrown");
         }
-        assertEquals(isIt, true);
+        assertTrue(Alive);
     }
 
-    @Test
     public void testGetRestaurants() {
-        RestAccess access = new RestAccess();
-
         Restaurant[] restaurants = new Restaurant[] {};
         try {
-            restaurants = access.getRestaurants("https://ilp-rest-2024.azurewebsites.net");
+            restaurants = RestAccess.getRestaurants("https://ilp-rest-2024.azurewebsites.net");
         } catch (Exception e) {
             fail("An exception " + e + " was thrown");
         }
 
-        for (int i = 0; i < restaurants.length; i++) {
-            System.out.println(restaurants[i].name());
-        }
-
-        List<String> RestNames = Arrays.asList(restaurants).stream().map( restaurant -> restaurant.name() ).collect( Collectors.toList() );
-        List<String> ConstantsNames = Arrays.asList(TestConstants.RESTAURANTS).stream().map(restaurant -> restaurant.name() ).collect( Collectors.toList() );
+        List<String> RestNames = Arrays.stream(restaurants).map(Restaurant::name).toList();
+        List<String> ConstantsNames = Arrays.stream(TestConstants.RESTAURANTS).map(Restaurant::name).toList();
 
         boolean isEqual = RestNames.equals(ConstantsNames);
 
-        assertEquals(true, isEqual);
+        assertTrue(isEqual);
+    }
+
+    public void testGetOrders() {
+        Order[] orders = new Order[] {};
+
+        try {
+            orders = RestAccess.getOrders("https://ilp-rest-2024.azurewebsites.net");
+        } catch (Exception e) {
+            fail("An exception " + e + " was thrown");
+        }
+
+        List<String> OrderIds = Arrays.stream(orders).map(Order::getOrderNo).toList();
+
+        boolean isEqual = OrderIds.size() == 600;
+
+        assertTrue(isEqual);
+    }
+
+    public void testGetCentralArea() {
+        NamedRegion centralArea = RestAccess.getCentralRegion("https://ilp-rest-2024.azurewebsites.net");
+
+        boolean isEqual = true;
+
+        for (int i = 0; i < centralArea.vertices().length; i++) {
+            if (!centralArea.vertices()[i].equals(TestConstants.CENTRAL_AREA.vertices()[i])) {
+                isEqual = false;
+                break;
+            }
+        }
+
+        assertTrue(isEqual);
+    }
+
+    public void testGetNoFlyZone() {
+        NamedRegion[] noFlyZones = RestAccess.getNoFlyZones("https://ilp-rest-2024.azurewebsites.net");
+
+        boolean isEqual = true;
+
+        for (int i = 0; i < noFlyZones.length; i++) {
+            NamedRegion noFlyZone = noFlyZones[i];
+            if (!(Objects.equals(noFlyZone.name(), TestConstants.NO_FLY_ZONES[i].name()))) {
+                isEqual = false;
+                break;
+            }
+            for (int j = 0; j < noFlyZone.vertices().length; j++) {
+                if (!noFlyZone.vertices()[j].equals(TestConstants.NO_FLY_ZONES[i].vertices()[j])) {
+                    isEqual = false;
+                    break;
+                }
+            }
+        }
+
+        assertTrue(isEqual);
     }
 }
