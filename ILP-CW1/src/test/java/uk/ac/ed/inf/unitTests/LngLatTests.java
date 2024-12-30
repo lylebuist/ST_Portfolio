@@ -194,4 +194,13 @@ public class LngLatTests {
 
         assertTrue(nextPos.equals(new LngLat(oldPos.lng() + dLng, oldPos.lat() + dLat)));
     }
+
+    @Test
+    public void isInCentral() {
+        LngLatHandler handler = new LngLatHandler();
+
+        LngLat centralPoint = new LngLat(-3.187319, 55.945712);
+
+        assertTrue(handler.isInCentralArea(centralPoint, TestConstants.CENTRAL_AREA));
+    }
 }
