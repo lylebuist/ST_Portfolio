@@ -29,12 +29,12 @@ public class OrderValidatorTest extends TestCase {
     public static Order createValidOrder() {
         var order = new Order();
         order.setOrderNo(String.format("%08X", ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE)));
-        order.setOrderDate(LocalDate.of(2023, 9, 1));
+        order.setOrderDate(LocalDate.of(2024, 9, 2));
 
         order.setCreditCardInformation(
                 new CreditCardInformation(
                         "0000000000000000",
-                        String.format("%02d/%02d", ThreadLocalRandom.current().nextInt(1, 12), ThreadLocalRandom.current().nextInt(24, 30)),
+                        String.format("%02d/%02d", ThreadLocalRandom.current().nextInt(1, 12), ThreadLocalRandom.current().nextInt(26, 32)),
                         "222"
                 )
         );
@@ -659,7 +659,7 @@ public class OrderValidatorTest extends TestCase {
         int currentYear = LocalDate.now().getYear() - 2000;
         int currentMonth = LocalDate.now().getMonthValue();
 
-        String generatedString = Integer.toString(currentMonth) + '/' + currentYear;
+        String generatedString = '0' + Integer.toString(currentMonth) + '/' + currentYear;
 
         order.getCreditCardInformation().setCreditCardExpiry(generatedString);
 
@@ -996,5 +996,19 @@ public class OrderValidatorTest extends TestCase {
 
         assertEquals(OrderStatus.INVALID, validatedOrder.getOrderStatus());
         assertEquals(OrderValidationCode.RESTAURANT_CLOSED, validatedOrder.getOrderValidationCode());
+    }
+
+    @RepeatedTest(100)
+    public void testPizzaUndefined() {
+        Order order = createValidOrder();
+
+        Restaurant restaurant1 = createValidRestaurant();
+
+        Order validatedOrder = new OrderValidator().validateOrder(order, new Restaurant[] { restaurant1 });
+
+        displayOrder(validatedOrder);
+
+        assertEquals(OrderStatus.INVALID, validatedOrder.getOrderStatus());
+        assertEquals(OrderValidationCode.PIZZA_NOT_DEFINED, validatedOrder.getOrderValidationCode());
     }
 }

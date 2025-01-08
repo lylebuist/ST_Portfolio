@@ -26,7 +26,7 @@ public class LngLatTests {
         LngLat pointA = new LngLat(x1, y1); LngLat pointB = new LngLat(x2, y2);
 
         // Yeah I did just need to pretty much put the answer in here, not ideal but eh
-        assertTrue(handler.distanceTo(pointA, pointB) == Math.hypot(Math.abs(x1 - x2), Math.abs(y1 - y2)));
+        assertEquals(handler.distanceTo(pointA, pointB), Math.hypot(Math.abs(x1 - x2), Math.abs(y1 - y2)));
     }
 
     /** isCloseTo */
@@ -173,7 +173,7 @@ public class LngLatTests {
         LngLat nextPos = handler.nextPosition(oldPos, 999);
 
         // If we've got a hover code (999) the two positions are the same
-        assertTrue(nextPos.equals(oldPos));
+        assertEquals(nextPos, oldPos);
     }
 
     @RepeatedTest(100)
@@ -192,7 +192,7 @@ public class LngLatTests {
         double dLng = 0.00015 * Math.cos((randomAngle));
         double dLat = 0.00015 * Math.sin((randomAngle));
 
-        assertTrue(nextPos.equals(new LngLat(oldPos.lng() + dLng, oldPos.lat() + dLat)));
+        assertEquals(nextPos, new LngLat(oldPos.lng() + dLng, oldPos.lat() + dLat));
     }
 
     @Test
@@ -202,5 +202,15 @@ public class LngLatTests {
         LngLat centralPoint = new LngLat(-3.187319, 55.945712);
 
         assertTrue(handler.isInCentralArea(centralPoint, TestConstants.CENTRAL_AREA));
+    }
+
+    @Test
+    public void centralNull() {
+        LngLatHandler handler = new LngLatHandler();
+        LngLat point = new LngLat(0.0, 0.0);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> handler.isInCentralArea(point, null));
+
+        assertEquals("the named region is null", exception.getMessage());
     }
 }
