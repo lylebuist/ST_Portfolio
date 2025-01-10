@@ -2,6 +2,8 @@ package uk.ac.ed.inf.unitTests;
 
 import junit.framework.TestCase;
 import org.junit.jupiter.api.RepeatedTest;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import uk.ac.ed.inf.data.Flightpath;
 import uk.ac.ed.inf.ilp.data.*;
 import uk.ac.ed.inf.pathFinding.*;
@@ -116,5 +118,16 @@ public class FlightPathTest extends TestCase {
         }
 
         assertTrue(path.isEmpty());
+    }
+
+    @Test
+    public void testPathCorrect() throws InterruptedException {
+        NamedRegion[] noFlyZones = RestAccess.getNoFlyZones(TestConstants.ENDPOINT);
+
+        LngLat to = new LngLat(-3.202541470527649, 55.943284737579376);
+
+        ArrayList<Flightpath> path = findPath(TestConstants.APPLETON_TOWER, to, "testOrder", noFlyZones, TestConstants.CENTRAL_AREA);
+
+        assertFalse(path.isEmpty());
     }
 }

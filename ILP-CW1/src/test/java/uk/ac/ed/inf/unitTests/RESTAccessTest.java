@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RESTAccessTest extends TestCase {
+    @Test
     public void testIsAliveNoURL() {
         boolean Alive = false;
         try {
@@ -22,6 +23,7 @@ public class RESTAccessTest extends TestCase {
         assertFalse(Alive);
     }
 
+    @Test
     public void testIsAliveMalformedURL() {
         boolean Alive = false;
         try {
@@ -33,6 +35,7 @@ public class RESTAccessTest extends TestCase {
         assertFalse(Alive);
     }
 
+    @Test
     public void testIsAlive() {
         boolean Alive = false;
         try {
@@ -43,6 +46,7 @@ public class RESTAccessTest extends TestCase {
         assertTrue(Alive);
     }
 
+    @Test
     public void testGetRestaurants() {
         Restaurant[] restaurants = new Restaurant[] {};
         try {
@@ -59,6 +63,7 @@ public class RESTAccessTest extends TestCase {
         assertTrue(isEqual);
     }
 
+    @Test
     public void testGetOrders() {
         Order[] orders = new Order[] {};
 
@@ -75,6 +80,7 @@ public class RESTAccessTest extends TestCase {
         assertTrue(isEqual);
     }
 
+    @Test
     public void testGetCentralArea() {
         NamedRegion centralArea = RestAccess.getCentralRegion("https://ilp-rest-2024.azurewebsites.net");
 
@@ -90,6 +96,7 @@ public class RESTAccessTest extends TestCase {
         assertTrue(isEqual);
     }
 
+    @Test
     public void testGetNoFlyZone() {
         NamedRegion[] noFlyZones = RestAccess.getNoFlyZones("https://ilp-rest-2024.azurewebsites.net");
 

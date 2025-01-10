@@ -633,7 +633,7 @@ public class OrderValidatorTest extends TestCase {
 
         String generatedString;
         if (randomYear < 10) {
-            generatedString = Integer.toString(randomMonth) + "/0" + randomYear;
+            generatedString = randomMonth + "/0" + randomYear;
         } else {
             generatedString = Integer.toString(randomMonth) + '/' + randomYear;
         }

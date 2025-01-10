@@ -170,10 +170,7 @@ public class OrderValidator implements OrderValidation {
 
             // Converts the entered date into LocalDate to check if it is in the future
             LocalDate newExpDate = LocalDate.of(Integer.parseInt(dateAndYear[1]), Integer.parseInt(dateAndYear[0]), 1);
-            if ((newExpDate.getYear() < orderYear) || (newExpDate.getYear() == orderYear) && (newExpDate.getMonth().getValue() < orderToValidate.getOrderDate().getMonth().getValue())) {
-                return true;
-            }
-            return false;
+            return (newExpDate.getYear() < orderYear) || (newExpDate.getYear() == orderYear) && (newExpDate.getMonth().getValue() < orderToValidate.getOrderDate().getMonth().getValue());
         }
         return true;
     }

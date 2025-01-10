@@ -1,32 +1,38 @@
 package uk.ac.ed.inf.unitTests;
 
 import junit.framework.TestCase;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-import uk.ac.ed.inf.data.Delivery;
+import uk.ac.ed.inf.data.Flightpath;
 import uk.ac.ed.inf.ilp.constant.OrderStatus;
 import uk.ac.ed.inf.ilp.constant.OrderValidationCode;
 import uk.ac.ed.inf.ilp.constant.SystemConstants;
 import uk.ac.ed.inf.ilp.data.*;
+import uk.ac.ed.inf.orderHandling.OrderValidator;
+import uk.ac.ed.inf.orderHandling.ValidateOrders;
+import uk.ac.ed.inf.pathFinding.FindAllPaths;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
-import static uk.ac.ed.inf.orderHandling.CreateDeliveries.createDeliveries;
+import static uk.ac.ed.inf.pathFinding.FindAllPaths.findAllPaths;
 import static uk.ac.ed.inf.unitTests.OrderValidatorTest.random;
 
-public class CreateDeliveriesTest extends TestCase{
+public class FindAllPathsTest extends TestCase {
     public static Order createValidOrder() {
         var order = new Order();
         order.setOrderNo(String.format("%08X", ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE)));
-        order.setOrderDate(LocalDate.of(2023, 9, 1));
+        order.setOrderDate(LocalDate.of(2024, 9, 2));
 
         order.setCreditCardInformation(
                 new CreditCardInformation(
                         "0000000000000000",
-                        String.format("%02d/%02d", ThreadLocalRandom.current().nextInt(1, 12), ThreadLocalRandom.current().nextInt(24, 30)),
+                        String.format("%02d/%02d", ThreadLocalRandom.current().nextInt(1, 12), ThreadLocalRandom.current().nextInt(26, 32)),
                         "222"
                 )
         );
@@ -66,41 +72,32 @@ public class CreateDeliveriesTest extends TestCase{
         return order;
     }
 
-    public static Restaurant createValidRestaurant() {
-        // Creates valid restaurant
-        return new Restaurant("testRestaurant",
-                new LngLat(55.945535152517735, -3.1912869215011597),
-                new DayOfWeek[] {
-                        DayOfWeek.MONDAY, DayOfWeek.FRIDAY
-                },
-                new Pizza[]{
-                        new Pizza("Pizza A", 2300),
-                        new Pizza("Pizza B", 2400),
-                        new Pizza("Pizza C", 2500)
-                }
-        ) ;
-    }
-
     @Test
-    public void testCreateDeliveriesCorrect() {
-        Order validOrder = createValidOrder();
-
-        Restaurant restaurant = createValidRestaurant();
-
-        validOrder = createValidPizza(restaurant, validOrder);
+    public void testFindAllPathsCorrect() {
         ArrayList<Order> orders = new ArrayList<>();
-        orders.add(validOrder);
 
-        ArrayList<Delivery> deliveries = new ArrayList<>();
-        for (Order order : orders) {
-            Delivery delivery = new Delivery(order.getOrderNo(), order.getOrderStatus(), order.getOrderValidationCode(),
-                    order.getPriceTotalInPence() + SystemConstants.ORDER_CHARGE_IN_PENCE);
-            deliveries.add(delivery);
-        }
+        Restaurant restaurant = new Restaurant("Civerinos Slice",
+                new LngLat(-3.1912869215011597, 55.945535152517735),
+                new DayOfWeek[] {DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY},
+                new Pizza[] {
+                        new Pizza("R1: Margarita", 1000),
+                        new Pizza("R1: Calzone", 1400)
+                }
+        );
 
-        ArrayList<Delivery> createdDeliveries = createDeliveries(orders);
+        Order validOrder1 = createValidOrder();
+        validOrder1 = createValidPizza(restaurant, validOrder1);
+        orders.add(validOrder1);
+        Order validOrder2 = createValidOrder();
+        validOrder2 = createValidPizza(restaurant, validOrder2);
+        orders.add(validOrder2);
+        Order validOrder3 = createValidOrder();
+        validOrder3 = createValidPizza(restaurant, validOrder3);
+        orders.add(validOrder3);
 
-        assertEquals(createdDeliveries, deliveries);
+        orders = ValidateOrders.validateOrders(orders, new Restaurant[]{restaurant});
+        ArrayList<Flightpath> allPaths = findAllPaths(orders, new Restaurant[]{restaurant}, TestConstants.NO_FLY_ZONES, TestConstants.CENTRAL_AREA);
+
+        assertFalse(allPaths.isEmpty());
     }
-
 }
